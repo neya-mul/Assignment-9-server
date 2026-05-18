@@ -36,12 +36,15 @@ async function run() {
         const petCollection = db.collection('pets')
 
 
-        app.get('/pets', async (req, res)=>{
+        app.get('/pets', async (req, res) => {
             const result = await petCollection.find().toArray()
             res.json(result)
         })
 
-
+        app.get('/pets/:id', async(req, res)=>{
+            const result = await petCollection.findOne()
+            res.json(result)
+        })
 
 
 
