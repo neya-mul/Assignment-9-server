@@ -9,7 +9,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 dotenv.config()
 
 const app = express()
-const port = process.env.PORT || 8000
+const port = process.env.PORT 
 
 app.use(cors())
 app.use(express.json())
@@ -35,6 +35,7 @@ async function run() {
         const db = client.db('pet-nest')
         const petCollection = db.collection('pets')
         const myListingCollection = db.collection('my-list')
+        const successStoryCollection = db.collection('success-stories')
 
 
         app.get('/pets', async (req, res) => {
@@ -54,6 +55,10 @@ async function run() {
             res.json(result)
         })
 
+        app.get('/success-storie', async(req, res)=>{
+            const result = await successStoryCollection.find().toArray()
+            res.json(result)
+        })
 
 
 
