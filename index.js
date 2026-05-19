@@ -59,6 +59,10 @@ async function run() {
             const result = await successStoryCollection.find().toArray()
             res.json(result)
         })
+        app.get('/my-list', async(req, res)=>{
+            const result = await myListingCollection.find().toArray()
+            res.json(result)
+        })
 
 
 
