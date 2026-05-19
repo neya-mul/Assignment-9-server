@@ -9,7 +9,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 dotenv.config()
 
 const app = express()
-const port = process.env.PORT 
+const port = process.env.PORT
 
 app.use(cors())
 app.use(express.json())
@@ -44,9 +44,16 @@ async function run() {
         })
 
         app.get('/pets/:id', async (req, res) => {
-            const result = await petCollection.findOne({ _id: new ObjectId(req.params.id) })
-            res.json(result)
-        })
+            const id = req.params.id;
+
+            // Check if it's a valid 24-character hex code before trying to use new ObjectId
+            const query = ObjectId.isValid(id)
+                ? { $or: [{ _id: id }, { _id: new ObjectId(id) }] }
+                : { _id: id };
+
+            const result = await petCollection.findOne(query);
+            res.json(result);
+        });
 
         app.post('/pets', async (req, res) => {
 
@@ -55,7 +62,7 @@ async function run() {
             res.json(result)
         })
 
-        app.get('/success-storie', async(req, res)=>{
+        app.get('/success-storie', async (req, res) => {
             const result = await successStoryCollection.find().toArray()
             res.json(result)
         })
