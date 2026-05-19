@@ -48,10 +48,10 @@ async function run() {
             res.json(result)
         })
 
-        app.post('/my-list', async (req, res) => {
+        app.post('/pets', async (req, res) => {
 
-            const myListing = req.body
-            const result = await myListingCollection.insertOne(myListing)
+            const myAdding = req.body
+            const result = await petCollection.insertOne(myAdding)
             res.json(result)
         })
 
@@ -59,10 +59,10 @@ async function run() {
             const result = await successStoryCollection.find().toArray()
             res.json(result)
         })
-        app.get('/my-list', async(req, res)=>{
-            const result = await myListingCollection.find().toArray()
-            res.json(result)
-        })
+        // app.get('/my-list', async(req, res)=>{
+        //     const result = await myListingCollection.find().toArray()
+        //     res.json(result)
+        // })
 
 
 
