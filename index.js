@@ -34,6 +34,7 @@ async function run() {
 
         const db = client.db('pet-nest')
         const petCollection = db.collection('pets')
+        const myListingCollection = db.collection('my-list')
 
 
         app.get('/pets', async (req, res) => {
@@ -41,11 +42,17 @@ async function run() {
             res.json(result)
         })
 
-        app.get('/pets/:id', async(req, res)=>{
-            const result = await petCollection.findOne()
+        app.get('/pets/:id', async (req, res) => {
+            const result = await petCollection.findOne({ _id: new ObjectId(req.params.id) })
             res.json(result)
         })
 
+        app.post('/my-list', async (req, res) => {
+
+            const myListing = req.body
+            const result = await myListingCollection.insertOne(myListing)
+            res.json(result)
+        })
 
 
 
