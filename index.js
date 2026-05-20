@@ -24,18 +24,24 @@ const client = new MongoClient(process.env.MONGO_URI, {
         deprecationErrors: true,
     }
 });
+
+
+let petCollection;
+let myListingCollection;
+let successStoryCollection;
+
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        // await client.db("admin").command({ ping: 1 });
+        // console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         const db = client.db('pet-nest')
-        const petCollection = db.collection('pets')
-        const myListingCollection = db.collection('my-list')
-        const successStoryCollection = db.collection('success-stories')
+        petCollection = db.collection('pets')
+        myListingCollection = db.collection('my-list')
+        successStoryCollection = db.collection('success-stories')
 
 
         app.get('/pets', async (req, res) => {
@@ -91,3 +97,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+module.exports = app 
