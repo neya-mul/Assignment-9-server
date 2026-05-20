@@ -94,6 +94,12 @@ async function run() {
             )
             res.json(result)
         })
+        app.delete('/pets/:id', async (req, res) => {
+            const { id } = req.params
+            const deletedData = req.body
+            const result = petCollection.deleteOne({ _id: new ObjectId(id) })
+            res.json(result)
+        })
 
 
 
