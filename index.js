@@ -45,8 +45,10 @@ async function run() {
 
 
         app.get('/pets', async (req, res) => {
-            const result = await petCollection.find().toArray()
-            res.json(result)
+            const { ownerId } = req.query;
+            const query = ownerId ? { ownerId: ownerId } : {};
+            const result = await petCollection.find(query).toArray();
+            res.json(result);
         })
 
         app.get('/pets/:id', async (req, res) => {
@@ -76,6 +78,12 @@ async function run() {
         //     const result = await myListingCollection.find().toArray()
         //     res.json(result)
         // })
+
+        app.get('/pets', async (req, res) => {
+            const ownerId = req.params.ownerId
+            const result = await petCollection.find({ ownerId: new ObjectId(ownerId) }).toArray()
+            res.json(result)
+        })
 
 
 
