@@ -29,6 +29,7 @@ const client = new MongoClient(process.env.MONGO_URI, {
 let petCollection;
 let myListingCollection;
 let successStoryCollection;
+let adoptionCollection;
 
 async function run() {
     try {
@@ -42,6 +43,7 @@ async function run() {
         petCollection = db.collection('pets')
         myListingCollection = db.collection('my-list')
         successStoryCollection = db.collection('success-stories')
+        adoptionCollection = db.collection('adoption-request')
 
 
         app.get('/pets', async (req, res) => {
@@ -98,6 +100,12 @@ async function run() {
             const { id } = req.params
             const deletedData = req.body
             const result = petCollection.deleteOne({ _id: new ObjectId(id) })
+            res.json(result)
+        })
+
+
+        app.post('/adoption-requests', async (req, res)=>{
+            const result = await adoptionCollection.insertOne(req.body)
             res.json(result)
         })
 
