@@ -58,9 +58,9 @@ async function run() {
                 query.petName = { $regex: searchName, $options: 'i' }
             }
 
-            // if(species){
-            //     query.species = {$in: species.split(',')}
-            // }
+            if(species){
+                query.species = {$in: species.split(',')}
+            }
             const result = await petCollection.find(query).toArray();
             res.json(result);
         })
