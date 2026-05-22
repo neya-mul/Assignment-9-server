@@ -104,11 +104,42 @@ async function run() {
         })
 
 
-        app.post('/adoption-requests', async (req, res)=>{
+        app.post('/adoption-requests', async (req, res) => {
             const result = await adoptionCollection.insertOne(req.body)
             res.json(result)
         })
 
+        app.get('/adoption-requests', async (req, res) => {
+            const { adopterId } = req.query;
+            const query = adopterId ? { adopterId: adopterId } : {};
+            const result = await adoptionCollection.find(query).toArray();
+            res.json(result);
+        })
+        // Add :id to the path string so req.params.id works!
+        app.patch('/adoption-requests/:id', async (req, res) => {
+            try {
+                const { id } = req.params;
+                const result = await adoptionCollection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: req.body }
+                );
+                res.json(result);
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
+
+        app.get('/adoption-requests/pet/:petId', async (req, res) => {
+            const { petId } = req.params
+            const result = await adoptionCollection.find({ petId: petId }).toArray()
+            res.json(result)
+        })
+
+        app.delete('/adoption-requests/pet/:id', async (req, res) => {
+            const { id } = req.params
+            const result = await adoptionCollection.deleteOne({ _id: new ObjectId(id) })
+            res.json(result)
+        })
 
 
     } finally {
