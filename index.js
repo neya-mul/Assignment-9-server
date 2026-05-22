@@ -47,8 +47,20 @@ async function run() {
 
 
         app.get('/pets', async (req, res) => {
-            const { ownerId } = req.query;
-            const query = ownerId ? { ownerId: ownerId } : {};
+            const { ownerId, species, searchName } = req.query;
+            // const query = ownerId ? { ownerId: ownerId } : {};
+            const query = {}
+            if (ownerId) {
+                query.ownerId = ownerId
+            }
+
+            if (searchName) {
+                query.petName = { $regex: searchName, $options: 'i' }
+            }
+
+            // if(species){
+            //     query.species = {$in: species.split(',')}
+            // }
             const result = await petCollection.find(query).toArray();
             res.json(result);
         })
