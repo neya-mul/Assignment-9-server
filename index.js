@@ -58,8 +58,8 @@ async function run() {
                 query.petName = { $regex: searchName, $options: 'i' }
             }
 
-            if(species){
-                query.species = {$in: species.split(',')}
+            if (species) {
+                query.species = { $in: species.split(',') }
             }
             const result = await petCollection.find(query).toArray();
             res.json(result);
@@ -117,6 +117,13 @@ async function run() {
 
 
         app.post('/adoption-requests', async (req, res) => {
+
+            const { petId, adopterId } = req.body
+            const existing = await adoptionCollection.findOne({petId, adopterId})
+            if(existing){
+                return res.status(409).json({alreadyRequested: true, message: 'You have already sent an adoption request for this pet.'})
+            }
+
             const result = await adoptionCollection.insertOne(req.body)
             res.json(result)
         })
