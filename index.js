@@ -34,7 +34,7 @@ let adoptionCollection;
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
         // console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -65,15 +65,7 @@ async function run() {
             res.json(result);
         })
 
-        app.get('/pets/:id', (req, res, next) => {
-            const header = req.headers.authorization
-            res.set('Cache-Control', 'no-store');
-
-            console.log(header);
-            next()
-
-
-        }, async (req, res) => {
+        app.get('/pets/:id', async (req, res) => {
             const id = req.params.id;
 
             // Check if it's a valid 24-character hex code before trying to use new ObjectId
