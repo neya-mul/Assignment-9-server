@@ -148,7 +148,7 @@ async function run() {
         })
 
 
-        app.post('/adoption-requests', async (req, res) => {
+        app.post('/adoption-requests',verifyToken, async (req, res) => {
 
             const { petId, adopterId } = req.body
             const existing = await adoptionCollection.findOne({ petId, adopterId })
@@ -160,7 +160,7 @@ async function run() {
             res.json(result)
         })
 
-        app.get('/adoption-requests', async (req, res) => {
+        app.get('/adoption-requests',verifyToken, async (req, res) => {
             const { adopterId } = req.query;
             const query = adopterId ? { adopterId: adopterId } : {};
             const result = await adoptionCollection.find(query).toArray();
