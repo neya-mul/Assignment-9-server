@@ -97,7 +97,7 @@ async function run() {
             res.json(result);
         })
 
-        app.get('/pets/:id',verifyToken, async (req, res) => {
+        app.get('/pets/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
 
             // Check if it's a valid 24-character hex code before trying to use new ObjectId
@@ -109,7 +109,7 @@ async function run() {
             res.json(result);
         });
 
-        app.post('/pets',verifyToken, async (req, res) => {
+        app.post('/pets', verifyToken, async (req, res) => {
 
             const myAdding = req.body
             const result = await petCollection.insertOne(myAdding)
@@ -120,10 +120,7 @@ async function run() {
             const result = await successStoryCollection.find().toArray()
             res.json(result)
         })
-        // app.get('/my-list', async(req, res)=>{
-        //     const result = await myListingCollection.find().toArray()
-        //     res.json(result)
-        // })
+
 
         app.get('/pets', async (req, res) => {
             const ownerId = req.params.ownerId
@@ -131,7 +128,7 @@ async function run() {
             res.json(result)
         })
 
-        app.patch('/pets/:id', async (req, res) => {
+        app.patch('/pets/:id', verifyToken, async (req, res) => {
             const { id } = req.params
             const updatedData = req.body
             const result = petCollection.updateOne(
@@ -148,7 +145,7 @@ async function run() {
         })
 
 
-        app.post('/adoption-requests',verifyToken, async (req, res) => {
+        app.post('/adoption-requests', verifyToken, async (req, res) => {
 
             const { petId, adopterId } = req.body
             const existing = await adoptionCollection.findOne({ petId, adopterId })
@@ -160,7 +157,7 @@ async function run() {
             res.json(result)
         })
 
-        app.get('/adoption-requests',verifyToken, async (req, res) => {
+        app.get('/adoption-requests', verifyToken, async (req, res) => {
             const { adopterId } = req.query;
             const query = adopterId ? { adopterId: adopterId } : {};
             const result = await adoptionCollection.find(query).toArray();
