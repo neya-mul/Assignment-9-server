@@ -109,7 +109,7 @@ async function run() {
             res.json(result);
         });
 
-        app.post('/pets', async (req, res) => {
+        app.post('/pets',verifyToken, async (req, res) => {
 
             const myAdding = req.body
             const result = await petCollection.insertOne(myAdding)
