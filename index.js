@@ -5,6 +5,9 @@ const cors = require('cors')
 const express = require("express");
 const dotenv = require("dotenv");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { createRemoteJWKSet, jwtVerify } = require("jose-cjs");
+const { URL } = require("node:url");
+require("jose-cjs")
 
 dotenv.config()
 
@@ -30,6 +33,35 @@ let petCollection;
 let myListingCollection;
 let successStoryCollection;
 let adoptionCollection;
+
+const JWKS = createRemoteJWKSet(
+    new URL('http://localhost:3000/api/auth/jwks')
+)
+
+
+const verifyToken = async (req, res, next) => {
+    const authHeader = req?.headers.authorization
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Unauthorized' })
+    }
+    const token = authHeader.split(' ')[1]
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' })
+
+    }
+    // console.log(token);
+
+    try {
+        const { payload } = await jwtVerify(token, JWKS)
+        console.log(payload);
+        next()
+    }
+    catch (error) {
+        return res.status(403).json({ message: 'Forbidden' })
+    }
+
+
+}
 
 async function run() {
     try {
@@ -65,7 +97,7 @@ async function run() {
             res.json(result);
         })
 
-        app.get('/pets/:id', async (req, res) => {
+        app.get('/pets/:id',verifyToken, async (req, res) => {
             const id = req.params.id;
 
             // Check if it's a valid 24-character hex code before trying to use new ObjectId
