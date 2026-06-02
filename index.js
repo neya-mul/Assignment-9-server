@@ -19,7 +19,6 @@ app.use(express.json())
 
 // const uri = process.env.MONGO_URI
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(process.env.MONGO_URI, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -80,7 +79,6 @@ async function run() {
 
         app.get('/pets', async (req, res) => {
             const { ownerId, species, searchName } = req.query;
-            // const query = ownerId ? { ownerId: ownerId } : {};
             const query = {}
             if (ownerId) {
                 query.ownerId = ownerId
@@ -100,7 +98,6 @@ async function run() {
         app.get('/pets/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
 
-            // Check if it's a valid 24-character hex code before trying to use new ObjectId
             const query = ObjectId.isValid(id)
                 ? { $or: [{ _id: id }, { _id: new ObjectId(id) }] }
                 : { _id: id };
@@ -131,13 +128,13 @@ async function run() {
         app.patch('/pets/:id', verifyToken, async (req, res) => {
             const { id } = req.params
             const updatedData = req.body
-            const result = petCollection.updateOne(
+            const result =await petCollection.updateOne(
                 { _id: new ObjectId(id) },
                 { $set: updatedData }
             )
             res.json(result)
         })
-        app.delete('/pets/:id',verifyToken, async (req, res) => {
+        app.delete('/pets/:id', verifyToken, async (req, res) => {
             const { id } = req.params
             const deletedData = req.body
             const result = petCollection.deleteOne({ _id: new ObjectId(id) })
@@ -157,13 +154,12 @@ async function run() {
             res.json(result)
         })
 
-        app.get('/adoption-requests', verifyToken, async (req, res) => {
+        app.get('/adoption-requests', async (req, res) => {
             const { adopterId } = req.query;
             const query = adopterId ? { adopterId: adopterId } : {};
             const result = await adoptionCollection.find(query).toArray();
             res.json(result);
         })
-        // Add :id to the path string so req.params.id works!
         app.patch('/adoption-requests/:id', async (req, res) => {
             try {
                 const { id } = req.params;
@@ -171,8 +167,22 @@ async function run() {
                     { _id: new ObjectId(id) },
                     { $set: req.body }
                 );
+
+                if (req.body.status === 'Approved') {
+                    const request = await adoptionCollection.findOne({ _id: new ObjectId(id) })
+
+                    if (request?.petId) {
+                        await petCollection.updateOne(
+                            { _id: new ObjectId(request.petId) },
+                            { $set: { adopted: true } },
+                            { ignoreUndefined: true } 
+                        )
+                    }
+                }
+
                 res.json(result);
             } catch (error) {
+                console.error(error)
                 res.status(500).json({ error: error.message });
             }
         });
