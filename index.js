@@ -34,7 +34,7 @@ let successStoryCollection;
 let adoptionCollection;
 
 const JWKS = createRemoteJWKSet(
-    new URL(`${process.env.CLIENT_URI}/api/auth/jwks`)
+    new URL(`${process.env.CLIENT_URI}api/auth/jwks`)
 )
 
 
