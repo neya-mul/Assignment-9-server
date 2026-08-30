@@ -34,7 +34,7 @@ let successStoryCollection;
 let adoptionCollection;
 
 const JWKS = createRemoteJWKSet(
-    new URL('https://assignment-9-ten-gules.vercel.app/api/auth/jwks')
+    new URL(`${process.env.CLIENT_URI}/api/auth/jwks`)
 )
 
 
